@@ -19,4 +19,4 @@ COPY dist/apps/backend .
 
 EXPOSE 3000
 
-CMD node backend/main.js
+CMD node main.js
