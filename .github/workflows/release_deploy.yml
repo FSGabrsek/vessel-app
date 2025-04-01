@@ -1,6 +1,8 @@
 name: Deploy to App Service
-on: 
-  push
+on:
+  release:
+      types:
+        - published
 
 jobs:
   bundle:
@@ -30,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-      
+
     needs: bundle
     steps:
       - uses: actions/checkout@v4
