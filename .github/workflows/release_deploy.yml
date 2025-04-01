@@ -1,7 +1,6 @@
 name: Deploy to App Service
 on: 
-  release:
-    types: [published]
+  push
 
 jobs:
   bundle:
@@ -23,7 +22,7 @@ jobs:
         run: npx nx run backend:build --disableNxCache --disableRemoteCache
       
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend-dist
           path: dist/apps/backend 
