@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Vessel as VesselModel, VesselDocument, IVessel, IVesselCreateDTO, IVesselUpdateTO } from "@vessel/shared";
-import { Model, Mongoose } from "mongoose";
+import { Vessel as VesselModel, VesselDocument, IVessel, IVesselCreateDTO, IVesselUpdateTO, Watch as WatchModel, WatchDocument } from "@vessel/shared";
+import mongoose, { Model, Mongoose } from "mongoose";
 
 @Injectable()
 export class VesselService {
@@ -9,6 +9,7 @@ export class VesselService {
 
     constructor(
         @InjectModel(VesselModel.name) private vesselModel: Model<VesselDocument>,
+        @InjectModel(WatchModel.name) private watchModel: Model<WatchDocument>,
     ) {}
 
     createFuzzyRegex(filter: string): RegExp {
@@ -53,7 +54,7 @@ export class VesselService {
             throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
         }
         
-        return this.vesselModel.findOneAndUpdate({ _id }, vessel).exec();
+        return this.vesselModel.findOneAndUpdate({ _id }, vessel, { new: true }).exec();
     }
 
     async delete(_id: string, user_id: string): Promise<IVessel> {
@@ -67,6 +68,29 @@ export class VesselService {
             throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
         }
 
-        return this.vesselModel.findOneAndDelete({ _id }).exec();
+        const dependants = await this.watchModel.aggregate([
+            { $match: { vessel: new mongoose.Types.ObjectId(_id) } },
+            { $match: { owner: { $ne: new mongoose.Types.ObjectId(user_id) } } }
+        ])
+        if (dependants.length !== 0) {
+            throw new HttpException('Cannot delete vessels with active users', HttpStatus.FORBIDDEN);
+        }
+
+        const mongoSession = await this.vesselModel.startSession();
+
+        mongoSession.startTransaction();
+
+        try {
+            await this.watchModel.deleteMany({ vessel: new mongoose.Types.ObjectId(_id), owner: new mongoose.Types.ObjectId(user_id) }, { session: mongoSession }).exec()
+            const deletedItem = await this.vesselModel.findOneAndDelete({ _id }, { session: mongoSession }).exec();
+            await mongoSession.commitTransaction();
+
+            return deletedItem;
+        } catch (error) {
+            await mongoSession.abortTransaction();
+            throw error;
+        } finally {
+            mongoSession.endSession();
+        }
     }
 }

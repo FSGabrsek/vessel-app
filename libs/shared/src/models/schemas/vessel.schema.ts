@@ -33,7 +33,7 @@ export class Vessel implements IVessel {
     owner!: IUser;
 
     @Prop({ required: true, type: String })
-    status!: "upcoming" | "releasing" | "finished" 
+    status!: "upcoming" | "ongoing" | "finished" 
 
     get currentLength(): number {
         const now = Date.now();

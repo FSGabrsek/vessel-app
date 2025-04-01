@@ -7,7 +7,7 @@ export interface IVessel {
     synopsis: string
     finalLength: number
     currentLength: number
-    status: 'upcoming' | 'releasing' | 'finished'
+    status: 'upcoming' | 'ongoing' | 'finished'
     releaseDate: Date
     releaseInterval?: number
     owner: IUser

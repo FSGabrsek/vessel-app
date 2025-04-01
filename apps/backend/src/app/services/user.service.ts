@@ -47,7 +47,7 @@ export class UserService {
         const neo4jTransaction = neo4jSession.beginTransaction();
 
         try {
-            const updatedItem = await this.userModel.findByIdAndUpdate({ _id }, user);
+            const updatedItem = await this.userModel.findByIdAndUpdate({ _id }, user, { new: true });
             
             const updatedUserQuery = `
             MATCH (u:User {id: $id})

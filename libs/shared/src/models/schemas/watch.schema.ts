@@ -18,9 +18,6 @@ export class Review implements IReview {
 
     @Prop({ required: true, type: String })
     content!: string;
-
-    @Prop({ required: true, type: Date })
-    lastModified!: Date;
 }
 
 @Schema()
