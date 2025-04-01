@@ -28,7 +28,7 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ env.REPO }}:${{ github.sha }}
-          file: .apps/backend/Dockerfile
+          file: apps/backend/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
