@@ -15,7 +15,7 @@ RUN npx nx run backend:build --disableNxCache --disableRemoteCache
 
 USER node
 
-COPY dist/apps/backend backend
+COPY dist/apps/backend .
 
 EXPOSE 3000
 
