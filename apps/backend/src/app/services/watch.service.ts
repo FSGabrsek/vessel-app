@@ -30,6 +30,12 @@ export class WatchService {
         return this.watchModel.find({ owner: owner_id }).populate('vessel').populate('owner')
     }
 
+    async findByVessel(vessel_id: string): Promise<IWatch[]> {
+        this.logger.log(`Finding all watches for vessel ${vessel_id}`)
+
+        return this.watchModel.find({ vessel: vessel_id }).populate('vessel').populate('owner')
+    }
+
     async create(watch: IWatchCreateDTO, owner_id: string): Promise<IWatch> {
         this.logger.log(`Creating watch entry for vessel with id ${watch.vessel}`)
 
