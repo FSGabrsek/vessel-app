@@ -23,7 +23,7 @@ export class VesselController {
     }
 
     @Get('/:id/watch')
-    async findAllWatches(@Param('vesselId') id: string): Promise<IWatch[]> {
+    async findAllWatches(@Param('id') id: string): Promise<IWatch[]> {
         return this.watchService.findByVessel(id);
     }
 
