@@ -13,9 +13,9 @@ export class VesselService {
     ) {}
 
     createFuzzyRegex(filter: string): RegExp {
-        const escapedFilter = filter.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-        const fuzzyPattern = escapedFilter.split('').join('?');
-        return new RegExp(`\\b${fuzzyPattern}\\b`, 'i');
+        const escaped = filter.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const pattern = escaped.split('').map(char => `${char}.*`).join('');
+        return new RegExp(pattern, 'i');
     }
 
     async findAll(filter?: string): Promise<IVessel[]> {
