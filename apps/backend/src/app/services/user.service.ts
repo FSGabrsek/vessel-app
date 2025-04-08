@@ -48,7 +48,7 @@ export class UserService {
         const neo4jTransaction = neo4jSession.beginTransaction();
 
         try {
-            if (await this.userModel.find({ email: user.email, _id: { $ne: new mongoose.Types.ObjectId(_id) } })) {
+            if (await this.userModel.findOne({ email: user.email, _id: { $ne: new mongoose.Types.ObjectId(_id) } })) {
                 this.logger.debug('user exists');
                 throw new ConflictException('User already exist');
             }
