@@ -23,4 +23,4 @@ export type IUserLoginDTO = Pick<IUser, 'email' | 'password'>
 
 export type IUserDTO = Omit<IUser, 'password'>
 export type IUserCreateDTO = Pick<IUser, 'username' | 'password' | 'email' |'dateOfBirth'>;
-export type IUserUpdateDTO = Partial<Omit<IUser, '_id' | 'password' | 'email'>>;
+export type IUserUpdateDTO = Partial<Omit<IUser, '_id'>>;

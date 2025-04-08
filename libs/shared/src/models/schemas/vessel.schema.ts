@@ -28,6 +28,9 @@ export class Vessel implements IVessel {
     
     @Prop({ required: true, type: Number })
     releaseInterval!: number;
+
+    @Prop({ required: false, type: Boolean, default: false })
+    bulkRelease?: boolean;
     
     @Prop({ required: true, type: MongooseSchema.Types.ObjectId, ref: "User" })
     owner!: IUser;
@@ -39,6 +42,18 @@ export class Vessel implements IVessel {
         const now = Date.now();
         const releaseTime = this.releaseDate.getTime();
         const elapsedTime = now - releaseTime;
+
+        if (this.status == 'finished') {
+            return this.finalLength // Done, final length
+        }
+
+        if (this.status == 'upcoming') {
+            return 0; // Before release, no progress
+        }
+
+        if (this.bulkRelease) {
+            return this.finalLength // Everything released at once, final length
+        }
 
         if (elapsedTime < 0) {
             return 0; // Before release, no progress

@@ -10,8 +10,9 @@ export interface IVessel {
     status: 'upcoming' | 'ongoing' | 'finished'
     releaseDate: Date
     releaseInterval?: number
+    bulkRelease?: boolean
     owner: IUser
 }
 
-export type IVesselCreateDTO = Omit<IVessel, '_id' | 'status' | 'owner'>
+export type IVesselCreateDTO = Omit<IVessel, '_id' | 'owner'>
 export type IVesselUpdateTO = Pick<IVessel, 'finalLength' | 'status'>
