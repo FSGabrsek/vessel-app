@@ -53,21 +53,23 @@ export class UserService {
                 throw new ConflictException('User already exist');
             }
 
-            const item = await this.userModel
+            if (user.password) {
+                const item = await this.userModel
                             .findOne({ _id })
                             .select('+password')
                             .exec();
                 
-            if (!item) {
-                this.logger.debug('User not found');
-                throw new UnauthorizedException('Email not found or password invalid');
-            }
-            const isPasswordValid = await compare(user.oldPassword, item.password);
-            if (!isPasswordValid) {
-                throw new UnauthorizedException('Email not found or password invalid');
+                if (!item) {
+                    this.logger.debug('User not found');
+                    throw new UnauthorizedException('Email not found or password invalid');
+                }
+                const isPasswordValid = await compare(user.oldPassword, item.password);
+                if (!isPasswordValid) {
+                    throw new UnauthorizedException('Email not found or password invalid');
+                }
+                user.password = await hash(user.password, 10);
             }
 
-            user.password = await hash(user.password, 10);
             const updatedItem = await this.userModel.findByIdAndUpdate({ _id }, user, { new: true });
             
             const updatedUserQuery = `
