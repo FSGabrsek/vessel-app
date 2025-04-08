@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User as UserModel, UserDocument, IUserCreateDTO, IUserUpdateDTO, ILinkedUser } from '@vessel/shared';
+import { User as UserModel, UserDocument, IUserUpdateDTO, ILinkedUser } from '@vessel/shared';
 import { IUser, IUserDTO } from '@vessel/shared';
+import { compare, hash } from 'bcrypt';
 import { Neo4jService } from 'nest-neo4j/dist';
 
 @Injectable()
@@ -47,6 +48,12 @@ export class UserService {
         const neo4jTransaction = neo4jSession.beginTransaction();
 
         try {
+            if (await this.userModel.findOne({ emailAddress: user.email })) {
+                this.logger.debug('user exists');
+                throw new ConflictException('User already exist');
+            }
+
+            user.password = await hash(user.password, 10);
             const updatedItem = await this.userModel.findByIdAndUpdate({ _id }, user, { new: true });
             
             const updatedUserQuery = `
@@ -56,8 +63,8 @@ export class UserService {
             `;
 
             await neo4jTransaction.run(updatedUserQuery, {
-            id: _id.toString(),
-            username: user.username,
+                id: _id.toString(),
+                username: user.username,
             });
 
             await mongoSession.commitTransaction();
