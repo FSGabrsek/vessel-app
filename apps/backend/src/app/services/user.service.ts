@@ -33,7 +33,7 @@ export class UserService {
     async findOneByEmail(email: string): Promise<IUserDTO | null> {
         this.logger.log(`Finding user by email ${email}`);
         const item = this.userModel
-            .findOne({ emailAddress: email })
+            .findOne({ email: email })
             .exec();
         return item;
     }
@@ -48,7 +48,7 @@ export class UserService {
         const neo4jTransaction = neo4jSession.beginTransaction();
 
         try {
-            if (await this.userModel.find({ emailAddress: user.email })) {
+            if (await this.userModel.find({ email: user.email, _id: { $ne: _id } })) {
                 this.logger.debug('user exists');
                 throw new ConflictException('User already exist');
             }
