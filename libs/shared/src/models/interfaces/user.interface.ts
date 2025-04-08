@@ -19,8 +19,16 @@ export interface IUserIdentity {
     token?: string;
 }
 
+interface IUserUpdateModel {
+    username: string;
+    oldPassword: string
+    password: string;
+    email: string;
+    dateOfBirth: Date;
+}
+
 export type IUserLoginDTO = Pick<IUser, 'email' | 'password'>
 
 export type IUserDTO = Omit<IUser, 'password'>
 export type IUserCreateDTO = Pick<IUser, 'username' | 'password' | 'email' |'dateOfBirth'>;
-export type IUserUpdateDTO = Partial<Omit<IUser, '_id'>>;
+export type IUserUpdateDTO = Partial<IUserUpdateModel>;

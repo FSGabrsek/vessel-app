@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User as UserModel, UserDocument, IUserUpdateDTO, ILinkedUser } from '@vessel/shared';
@@ -48,9 +48,23 @@ export class UserService {
         const neo4jTransaction = neo4jSession.beginTransaction();
 
         try {
-            if (await this.userModel.findOne({ emailAddress: user.email })) {
+            if (await this.userModel.find({ emailAddress: user.email })) {
                 this.logger.debug('user exists');
                 throw new ConflictException('User already exist');
+            }
+
+            const item = await this.userModel
+                            .findOne({ _id })
+                            .select('+password')
+                            .exec();
+                
+            if (!item) {
+                this.logger.debug('User not found');
+                throw new UnauthorizedException('Email not found or password invalid');
+            }
+            const isPasswordValid = await compare(user.oldPassword, item.password);
+            if (!isPasswordValid) {
+                throw new UnauthorizedException('Email not found or password invalid');
             }
 
             user.password = await hash(user.password, 10);
