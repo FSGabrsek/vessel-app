@@ -24,7 +24,7 @@ const { isValid } = useForm({
 
 const register = async () => {
     try {
-        await auth.register(userModel);
+        await auth.register(userModel.value);
         await router.push({ name: 'home' });
     } catch(e) {
         console.error(e)

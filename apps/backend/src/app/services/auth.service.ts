@@ -71,7 +71,7 @@ export class AuthService {
         const neo4jTransaction = neo4jSession.beginTransaction();
 
         try {
-            if (await this.userModel.findOne({ emailAddress: user.email })) {
+            if (await this.userModel.findOne({ email: user.email })) {
                 this.logger.debug('user exists');
                 throw new ConflictException('User already exist');
             }
