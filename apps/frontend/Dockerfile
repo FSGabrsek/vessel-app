@@ -1,17 +1,11 @@
-ARG NODE_VERSION=22.14.0
+FROM FROM nginx:stable-alpine
 
-FROM node:${NODE_VERSION}-alpine
-
-ENV NODE_ENV production 
+RUN rm -rf /usr/share/nginx/html/*
 
 WORKDIR /usr/src/app
 
-COPY package*.json .
-
-RUN npm ci --omit=dev
-
 COPY dist/apps/frontend/ .
 
-EXPOSE 4200
+EXPOSE 80
 
-CMD node main.js
+CMD ["nginx", "-g", "daemon off;"]
