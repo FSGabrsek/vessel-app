@@ -21,6 +21,8 @@ jobs:
 
       - name: Bundle application
         run: npx nx run frontend:build --disableNxCache --disableRemoteCache
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
       
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
