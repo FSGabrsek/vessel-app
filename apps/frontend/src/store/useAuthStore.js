@@ -11,6 +11,8 @@ export const useAuthStore = defineStore("auth", () => {
     const register = async (model) => {
         loadingStore.start()
 
+        console.log(model)
+
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, model);
             await login(model.email, model.password)

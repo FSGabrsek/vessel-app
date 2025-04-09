@@ -94,7 +94,8 @@ export class AuthService {
             await mongoSession.commitTransaction();
             await neo4jTransaction.commit();
             
-            const { password, ...safeUser } = createdItem[0];
+            const userObject = createdItem[0].toObject();
+            const { password, ...safeUser } = userObject;
             return safeUser;
         } catch (error) {
             await mongoSession.abortTransaction();

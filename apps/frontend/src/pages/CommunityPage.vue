@@ -5,6 +5,7 @@ import { useUser } from '../composables/useUser';
 import { useWatch } from '../composables/useWatch';
 import { useAuthStore } from '../store/useAuthStore';
 import router from '../router';
+import { useForm } from '../composables/useForm';
 
 const auth = useAuthStore();
 const { loadUser, updateUser } = useUser()
@@ -14,7 +15,13 @@ const user = ref(null)
 const userWatches = ref(null)
 const followers = ref(true)
 const userModel = ref(null)
-const userUpdateModel = ref(null)
+const userUpdateModel = ref({
+    username: "",
+    email: "",
+    dateOfBirth: "",
+    password: "",
+    oldPassword: "",
+})
 const editMode = ref(false)
 
 const form = ref(null)
@@ -62,8 +69,12 @@ const submit = async () => {
     }
 
     await reloadUser()
-    auth.updateStorageUser(userUpdateModel.value.username, userUpdateModel.value.email)
-
+    auth.user = {
+        ...auth.user,
+        username: userUpdateModel.value.username,
+        email: userUpdateModel.value.email,
+        dateOfBirth: userUpdateModel.value.dateOfBirth,
+    }
     editMode.value = false
 }
 </script>
