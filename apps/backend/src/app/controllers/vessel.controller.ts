@@ -52,7 +52,7 @@ export class VesselController {
         return this.vesselService.delete(id, req.user.user_id);
     }
 
-    @Get(':userId/recommendation')
+    @Get('recommendation/user/:userId/')
     async findRecommended(
         @Query('n') n: number = 5,
         @Param('userId') userId: string 
