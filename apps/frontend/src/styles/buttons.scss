@@ -1,0 +1,58 @@
+@mixin button($color, $hover-color) {
+    &-solid {
+        color: $text;
+        border-radius: $px-xs;
+        padding: $px-xs;
+
+        background-color: $color;
+
+        &:hover {
+            background-color: $hover-color;
+        }
+
+        &:disabled {
+            background-color: $outline;
+            color: $highlight;
+            cursor: default;
+        }
+    }
+    
+    &-hollow {
+        color: $text;
+        border-radius: $px-xs;
+        padding: $px-xs;
+
+        background-color: transparent;
+        outline: 2px solid $color;
+
+        &:hover {
+            outline: 2px solid $hover-color;
+        }
+
+        &:disabled {
+            outline: 2px solid $outline;
+            cursor: default;
+        }
+    }
+}
+
+.button-cyan {
+    @include button($cyan-primary, $cyan-bright);
+}
+
+.button-amber {
+    @include button($amber-primary, $amber-bright);
+}
+
+.button-red {
+    @include button($red-primary, $red-bright);
+}
+
+// remove default styling
+button {
+    border: 0;
+    outline: 0;
+    background-color: none;
+
+    cursor: pointer;
+}

@@ -1,0 +1,37 @@
+.form-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    gap: $px-m;
+
+    h2 {
+        margin: 0 0 3px 0;
+    }
+
+    svg:hover {
+        color: $highlight;
+        cursor: pointer
+    }
+}
+
+.form-element {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: row;
+    gap: $px-m;
+
+    flex-wrap: wrap;
+}
+
+.form-parallel {
+    display: flex;
+    flex-direction: row;
+    gap: $px-xs;
+}

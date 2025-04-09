@@ -1,0 +1,31 @@
+@import "./styles/variables";
+
+@import "./styles/fonts";
+@import "./styles/headings";
+@import "./styles/inputs";
+@import "./styles/buttons";
+@import "./styles/anchors";
+@import "./styles/spans.scss";
+@import "./styles/forms.scss";
+
+
+body, #root {
+    height: 100%;
+    width: 100%;
+}
+
+#root {
+    padding-bottom: $px-l;
+}
+
+html {
+    font-family: 'Open Sans', sans-serif;
+    color: $text;
+
+    min-height: 100vh;
+}
+
+body {
+    margin: 0;
+    background-color: $bg-primary;
+}

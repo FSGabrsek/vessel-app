@@ -1,0 +1,20 @@
+.highlight-span {
+    font-weight: $semibold;
+}
+
+.cursive-span {
+    font-style: italic;
+}
+
+.tiny {
+    font-size: small;
+    color: $highlight;
+    font-style: italic;
+    align-self: center;
+}
+
+.error-span {
+    font-size: small;
+    color: $red-primary;
+    font-style: italic;
+}

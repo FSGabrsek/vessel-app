@@ -1,0 +1,75 @@
+input, textarea, select {
+    background-color: $bg-bright;
+    color: $text;
+
+    border-radius: $px-xs;
+    padding: $px-xs;
+
+    font-family: 'Open Sans', sans-serif;
+
+    &::placeholder {
+        color: $highlight;
+    }
+
+    &:focus {
+        outline: 2px $outline solid;
+    }
+
+    &:invalid {
+        outline: 2px $red-bright solid;
+    }
+
+    &:disabled {
+        color: $outline;
+    }
+}
+
+textarea {
+    font-size: 13.333333px;
+}
+
+label {
+    display: block;
+    font-weight: $semibold;
+}
+
+// remove default styling
+input, textarea {
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    border: 0;
+    outline: 0;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+input[type=number] {
+    -moz-appearance:textfield;
+    appearance: textfield;
+}
+
+input[type=checkbox] {
+    height: fit-content;
+    width: fit-content;
+
+    border-radius: $px-xxs;
+}
+
+textarea {
+    resize: none;
+}
+
+select, option {
+    border: 0;
+    outline: 0;
+
+    &:disabled {
+        color: $highlight;
+    }
+}
