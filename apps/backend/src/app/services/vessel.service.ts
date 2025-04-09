@@ -45,7 +45,7 @@ export class VesselService {
         const recommendations = await this.neo4jService.read(recommendQuery, { userId: _userId });
         const recommendedIds = recommendations.records.map(record => record.get('id'));
 
-        return this.vesselModel.aggregate([
+        const rawVessels = await this.vesselModel.aggregate([
             {
                 $facet: {
                     recommended: [
@@ -71,6 +71,9 @@ export class VesselService {
             { $unwind: "$combined" },
             { $replaceRoot: { newRoot: "$combined" } }
         ]);
+
+        const vesselDocuments = rawVessels.map(v => this.vesselModel.hydrate(v))
+        return vesselDocuments.map(v => v.toObject())
     }
 
     async create(vessel: IVesselCreateDTO, owner_id: string): Promise<IVessel> {
