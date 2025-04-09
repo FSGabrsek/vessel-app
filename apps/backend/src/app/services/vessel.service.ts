@@ -69,6 +69,7 @@ export class VesselService {
                 }
             },
             { $unwind: "$combined" },
+            { $replaceRoot: { newRoot: "$combined" } },
             {
                 $lookup: {
                   from: "users",
@@ -77,7 +78,6 @@ export class VesselService {
                   as: "owner"
                 }
             },
-            { $replaceRoot: { newRoot: "$combined" } },
             { $unwind: { path: "$owner", preserveNullAndEmptyArrays: true } }
         ]);
 
