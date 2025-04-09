@@ -57,6 +57,6 @@ export class VesselController {
         @Query('n') n: number = 5,
         @Param('userId') userId: string 
     ): Promise<IVessel[]> {
-        return this.vesselService.reccommend(userId, n)
+        return this.vesselService.reccommend(userId, +n)
     }
 }
