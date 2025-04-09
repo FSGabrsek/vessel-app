@@ -77,7 +77,8 @@ export class VesselService {
                   as: "owner"
                 }
             },
-            { $replaceRoot: { newRoot: "$combined" } }
+            { $replaceRoot: { newRoot: "$combined" } },
+            { $unwind: { path: "$owner", preserveNullAndEmptyArrays: true } }
         ]);
 
         const vesselDocuments = rawVessels.map(v => this.vesselModel.hydrate(v))
