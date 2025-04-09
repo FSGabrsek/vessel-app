@@ -78,7 +78,8 @@ export class VesselService {
                   as: "owner"
                 }
             },
-            { $unwind: { path: "$owner", preserveNullAndEmptyArrays: true } }
+            { $unwind: { path: "$owner", preserveNullAndEmptyArrays: true } },
+            { $project: { "owner.password": 0 } }
         ]);
 
         const vesselDocuments = rawVessels.map(v => this.vesselModel.hydrate(v))
