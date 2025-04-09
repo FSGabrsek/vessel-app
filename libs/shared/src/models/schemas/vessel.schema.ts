@@ -47,10 +47,6 @@ export class Vessel implements IVessel {
             return this.finalLength // Done, final length
         }
 
-        if (this.status == 'upcoming') {
-            return 0; // Before release, no progress
-        }
-
         if (this.bulkRelease) {
             return this.finalLength // Everything released at once, final length
         }
@@ -73,10 +69,6 @@ VesselSchema.virtual("currentLength").get(function (this: VesselDocument) {
 
     if (this.status == 'finished') {
         return this.finalLength // Done, final length
-    }
-
-    if (this.status == 'upcoming') {
-        return 0; // Before release, no progress
     }
 
     if (this.bulkRelease) {
