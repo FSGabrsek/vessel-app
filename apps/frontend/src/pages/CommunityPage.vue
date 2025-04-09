@@ -1,11 +1,12 @@
 <script setup>
-import { useAuth } from '../composables/useAuth';
-import { computed, onBeforeMount, ref, useModel, watchEffect } from 'vue';
+import { onBeforeMount, ref, watchEffect } from 'vue';
 import UserItem from '../components/UserItem.vue';
 import { useUser } from '../composables/useUser';
 import { useWatch } from '../composables/useWatch';
+import { useAuthStore } from '../store/useAuthStore';
+import router from '../router';
 
-const auth = useAuth();
+const auth = useAuthStore();
 const { loadUser, updateUser } = useUser()
 const { loadWatches } = useWatch()
 
@@ -17,11 +18,16 @@ const userUpdateModel = ref(null)
 const editMode = ref(false)
 
 const form = ref(null)
-const formIsvalid = ref(false)
 const errorMessage = ref(null)
 
+const { isValid } = useForm({
+    form: form,
+    model: userUpdateModel,
+    requiredKeys: ["username", "email", "dateOfBirth"],
+})
+
 const reloadUser = async () => {
-    user.value = await loadUser(auth.user.value._id)
+    user.value = await loadUser(auth.user._id)
     userModel.value = user.value
 
     userModel.value.dateOfBirth = new Date(userModel.value.dateOfBirth).toISOString().split('T')[0]
@@ -30,12 +36,13 @@ const reloadUser = async () => {
 
 const logout = async () => {
     auth.logout()
+    router.push({ name: 'login' })
 }
 
 onBeforeMount(async () => {
     [user.value, userWatches.value] = await Promise.all([
-        loadUser(auth.user.value._id),
-        loadWatches(auth.user.value._id)
+        loadUser(auth.user._id),
+        loadWatches(auth.user._id)
     ])
     userModel.value = user.value
 
@@ -47,7 +54,7 @@ onBeforeMount(async () => {
 const submit = async () => {
     try {
         userUpdateModel.value.dateOfBirth = new Date(userUpdateModel.value.dateOfBirth).toISOString()
-        await updateUser(auth.user.value._id, userUpdateModel.value)
+        await updateUser(auth.user._id, userUpdateModel.value)
         errorMessage.value = null
     } catch (e) {
         errorMessage.value = e.message
@@ -59,32 +66,10 @@ const submit = async () => {
 
     editMode.value = false
 }
-
-watchEffect(() => {
-    let model = userUpdateModel.value
-
-    if (model == null) {
-        model = {}
-    }
-
-    const required = ["username", "email", "dateOfBirth"];
-    const hasAllFields = required.every(key => model.hasOwnProperty(key) && model[key] !== "");
-
-    let domValid = true;
-    if (form.value) {
-        const controls = form.value.querySelectorAll('input, select, textarea');
-        domValid = Array.from(controls).every(el => {
-            return el.offsetParent === null || el.checkValidity();
-        });
-    }
-
-    formIsvalid.value = hasAllFields && domValid;
-})
-
 </script>
 
 <template>
-    <div class="wrapper" v-if="user && auth.user.value">
+    <div class="wrapper" v-if="user && auth.user">
         <h1>Community</h1>
         <div class="content-wrapper">
             <div class="menu" ref="form">
@@ -127,7 +112,7 @@ watchEffect(() => {
                     </div>
                     <span class="error-span" v-if="errorMessage">{{ errorMessage }}</span>
                     <div v-if="editMode" class="button-group">
-                        <button class="button-cyan-solid" :disabled="!formIsvalid" @click="submit">Confirm</button>
+                        <button class="button-cyan-solid" :disabled="!isValid" @click="submit">Confirm</button>
                         <button class="button-red-hollow" @click="editMode = false">Cancel</button>
                     </div>
                 </div>
@@ -139,8 +124,8 @@ watchEffect(() => {
                 <div class="menu-content">
                     <div class="point">
                         <svg xmlns="http://www.w3.org/2000/svg" height="2rem" width="2rem" viewBox="0 0 24 24" fill="currentColor"><path d="M12.1717 12.0005L9.34326 9.17203L10.7575 7.75781L15.0001 12.0005L10.7575 16.2431L9.34326 14.8289L12.1717 12.0005Z"></path></svg>
-                        <span class="highlight-span">{{ userWatches.filter(w => w.vessel.owner === auth.user.value._id).length }}</span>
-                        <span>vessel{{ userWatches.filter(w => w.vessel.owner === auth.user.value._id).length === 1 ? "" : "s" }} created</span>
+                        <span class="highlight-span">{{ userWatches.filter(w => w.vessel.owner === auth.user._id).length }}</span>
+                        <span>vessel{{ userWatches.filter(w => w.vessel.owner === auth.user._id).length === 1 ? "" : "s" }} created</span>
                     </div>
                     <div class="point">
                         <svg xmlns="http://www.w3.org/2000/svg" height="2rem" viewBox="0 0 24 24" fill="currentColor"><path d="M12.1717 12.0005L9.34326 9.17203L10.7575 7.75781L15.0001 12.0005L10.7575 16.2431L9.34326 14.8289L12.1717 12.0005Z"></path></svg>
@@ -178,7 +163,7 @@ watchEffect(() => {
 .content-wrapper {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: space-between;
     gap: clamp($px-m, 5%, $px-xl);
 }
 

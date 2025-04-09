@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { useAuth } from './useAuth'
 import { useLoadingStore } from '../store/useLoadingStore'
+import { useAuthStore } from '../store/useAuthStore'
 
 export function useWatch() {
-    const auth = useAuth()
+    const auth = useAuthStore()
 
     const loadingStore = useLoadingStore()
     
@@ -13,7 +13,7 @@ export function useWatch() {
 
         try {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/${userId}/watch`,
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
@@ -28,7 +28,7 @@ export function useWatch() {
 
         try {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/${userId}/watch/${watchId}`,
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
@@ -48,7 +48,7 @@ export function useWatch() {
                     "progress": model.progress 
 
                 },
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
@@ -65,7 +65,7 @@ export function useWatch() {
         try {
             const res = await axios.put(`${import.meta.env.VITE_API_URL}/user/${userId}/watch/${watchId}`,
                 { "progress": model.progress },
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
@@ -80,7 +80,7 @@ export function useWatch() {
 
         try {
             const res = await axios.delete(`${import.meta.env.VITE_API_URL}/user/${userId}/watch/${watchId}`,
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
@@ -100,7 +100,7 @@ export function useWatch() {
                     "rating": model.rating,
                     "content": model.content
                 },
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
@@ -115,7 +115,7 @@ export function useWatch() {
 
         try {
             const res = await axios.delete(`${import.meta.env.VITE_API_URL}/user/${userId}/watch/${watchId}/review`,
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data

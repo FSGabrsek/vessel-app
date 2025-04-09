@@ -2,15 +2,15 @@
 import { onBeforeMount, ref } from 'vue';
 import VesselDetail from '../components/VesselDetail.vue';
 import { useVessel } from '../composables/useVessel';
-import { useAuth } from '../composables/useAuth';
+import { useAuthStore } from '../store/useAuthStore';
 
-const auth = useAuth()
+const auth = useAuthStore()
 const { loadRecommendations } = useVessel()
 
 const recommendations = ref(null)
 
 onBeforeMount(async () => {
-    recommendations.value = await loadRecommendations(auth.user.value._id, 5)
+    recommendations.value = await loadRecommendations(auth.user._id, 5)
 })
 
 </script>

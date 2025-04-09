@@ -1,12 +1,12 @@
 <script setup>
 import { onBeforeMount, ref } from 'vue';
-import { useAuth } from '../composables/useAuth';
 import { useUser } from '../composables/useUser';
 import UserItem from './UserItem.vue';
+import { useAuthStore } from '../store/useAuthStore';
 
 const props = defineProps(['watchers', 'ownerId'])
 
-const auth = useAuth()
+const auth = useAuthStore()
 const { loadUser } = useUser()
 
 const owner = ref(null)
@@ -14,13 +14,13 @@ const user = ref(null)
 
 onBeforeMount(async () => {
     [user.value, owner.value] = await Promise.all([
-        loadUser(auth.user.value._id),
+        loadUser(auth.user._id),
         loadUser(props.ownerId)
     ])
 })
 
 const reloadUser = async () => {
-    user.value = await loadUser(auth.user.value._id)
+    user.value = await loadUser(auth.user._id)
 }
 
 </script>

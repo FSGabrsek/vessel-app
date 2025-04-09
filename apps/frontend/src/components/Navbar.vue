@@ -1,18 +1,17 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-import { useAuth } from '../composables/useAuth';
+import { useAuthStore } from '../store/useAuthStore';
 
-const auth = useAuth()
-
+const auth = useAuthStore()
 </script>
 
 <template>
-    <div class="nav-wrapper" v-if="auth.user.value">
+    <div class="nav-wrapper" v-if="auth.user">
         <RouterLink :to="{ name: 'home' }" class="link list-link">
             <svg class="vessel-icon" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88.07 130.4" width="24" height="24"><path fill="currentColor" d="M75,140.2a126.74,126.74,0,0,0,17-17C131.07,75.85,117,10.07,114.69,9.8c-1-.11-.12,11-3.9,27.81a144,144,0,0,1-7.44,23.21c-5.75,14.51-9,22.34-17,28.35A36.83,36.83,0,0,1,80,92.77a12.28,12.28,0,0,1-10.51-.06,35.49,35.49,0,0,1-5.85-3.54c-8-6-11.26-13.84-17-28.34a143.89,143.89,0,0,1-7.44-23.22C35.43,20.79,36.28,9.69,35.31,9.8,33,10.07,18.93,75.85,58,123.19a126.74,126.74,0,0,0,17,17" transform="translate(-30.96 -9.8)"/></svg>
             <div class="link-text">Home</div>
         </RouterLink>
-        <RouterLink :to="{ name: 'watch', params: { userId: auth.user.value._id } }" class="link list-link">
+        <RouterLink :to="{ name: 'watch', params: { userId: auth.user._id } }" class="link list-link">
             <svg class="list-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M11,4H21V6H11Zm0,4h6v2H11Zm0,6H21v2H11Zm0,4h6v2H11ZM3,4H9v6H3ZM3,14H9v6H3Z" fill="currentColor"/></svg>
             <div class="link-text">My list</div>
         </RouterLink>

@@ -16,7 +16,7 @@ input, textarea, select {
     }
 
     &:invalid {
-        outline: 2px $red-bright solid;
+        outline: 2px $amber-bright solid;
     }
 
     &:disabled {

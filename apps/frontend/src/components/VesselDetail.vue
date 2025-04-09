@@ -2,9 +2,9 @@
 import { onBeforeMount, ref } from 'vue';
 import { lengthFlavourText } from '../utils/vesselUtils';
 import UserItem from './UserItem.vue';
-import { useAuth } from '../composables/useAuth';
 import { useWatch } from '../composables/useWatch';
 import { useUser } from '../composables/useUser';
+import { useAuthStore } from '../store/useAuthStore';
 
 const props = defineProps({
     target: Object,
@@ -12,7 +12,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['submit', 'cancel'])
 
-const auth = useAuth()
+const auth = useAuthStore()
 const { loadWatches } = useWatch()
 const { loadUser } = useUser()
 
@@ -22,13 +22,13 @@ const userWatches = ref(null)
 
 onBeforeMount(async () => {
     [user.value, userWatches.value] = await Promise.all([
-        loadUser(auth.user.value._id),
-        loadWatches(auth.user.value._id)
+        loadUser(auth.user._id),
+        loadWatches(auth.user._id)
     ])
 })
 
 const reloadUser = async () => {
-    user.value = await loadUser(auth.user.value._id)
+    user.value = await loadUser(auth.user._id)
 }
 
 const add = () => {

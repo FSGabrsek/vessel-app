@@ -1,18 +1,18 @@
 <script setup>
 import { onBeforeMount, ref, Teleport } from 'vue';
-import { useAuth } from '../composables/useAuth';
 import { useVessel } from '../composables/useVessel';
 import { useWatch } from '../composables/useWatch';
 import WatchProgressItem from './WatchProgressItem.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { lengthFlavourText } from '../utils/vesselUtils';
 import ReviewItem from './ReviewItem.vue';
+import { useAuthStore } from '../store/useAuthStore';
 
 const props = defineProps(['watch'])
 const route = useRoute()
 const router = useRouter()
 
-const auth = useAuth()
+const auth = useAuthStore()
 const { updateVessel, loadWatchers, removeVessel } = useVessel()
 const { loadWatches, addWatch, updateWatch, removeWatch, setReview, unsetReview } = useWatch()
 
@@ -29,21 +29,21 @@ const permanentDelete = ref(false)
 const reviewItemComponent = ref(null)
 
 onBeforeMount(async () => {
-    userWatches.value = await loadWatches(auth.user.value._id)
+    userWatches.value = await loadWatches(auth.user._id)
 });
 
 const add = async () => {
     const postModel = watchModel.value
     postModel.progress = 0
 
-    const res = await addWatch(auth.user.value._id, postModel)
-    router.push(`/user/${auth.user.value._id}/watch/${res._id}`)
+    const res = await addWatch(auth.user._id, postModel)
+    router.push(`/user/${auth.user._id}/watch/${res._id}`)
 }
 
 const remove = async () => {
     const watchers = await loadWatchers(watchModel.value.vessel._id)
     
-    if ((watchers.length === 1) && (watchers[0]._id === auth.user.value._id) && (watchModel.value.vessel.owner === auth.user.value._id)) {
+    if ((watchers.length === 1) && (watchers[0]._id === auth.user._id) && (watchModel.value.vessel.owner === auth.user._id)) {
         deleteMode.value = true
     } else {
         await commitRemove()
@@ -52,12 +52,12 @@ const remove = async () => {
 
 const commitRemove = async () => {
     deleteMode.value = false
-    const res = await removeWatch(auth.user.value._id, watchModel.value._id)
+    const res = await removeWatch(auth.user._id, watchModel.value._id)
     if (permanentDelete.value) {
         await removeVessel(res.vessel._id)
         permanentDelete.value = false
     }
-    router.push({ name: "watch", params: { userId: auth.user.value.id } })
+    router.push({ name: "watch", params: { userId: auth.user.id } })
 }
 
 
@@ -79,16 +79,16 @@ const saveProgress = () => {
         clearTimeout(progressTimer.value)
     }
     progressTimer.value = setTimeout(async () => {
-        await updateWatch(auth.user.value._id, watchModel.value._id, watchModel.value)
+        await updateWatch(auth.user._id, watchModel.value._id, watchModel.value)
     }, 400)
 };
 
 const saveReview = async (review) => {
     if (review.content == "") {
-        await unsetReview(auth.user.value._id, watchModel.value._id)
+        await unsetReview(auth.user._id, watchModel.value._id)
         watchModel.value.review = undefined
     } else {
-        await setReview(auth.user.value._id, watchModel.value._id, review)
+        await setReview(auth.user._id, watchModel.value._id, review)
         watchModel.value.review = review
     }
 }
@@ -131,7 +131,7 @@ const triggerReview = () => {
                     <option>finished</option>
                 </select>
             </div>
-            <div class="edit-control-group" v-if="watchModel.vessel.owner === auth.user.value._id">
+            <div class="edit-control-group" v-if="watchModel.vessel.owner === auth.user._id">
                 <div title="edit" v-if="!editMode && !reviewMode" @click="editMode=true">
                     <svg id="edit" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6.41421 15.89L16.5563 5.74785L15.1421 4.33363L5 14.4758V15.89H6.41421ZM7.24264 17.89H3V13.6473L14.435 2.21231C14.8256 1.82179 15.4587 1.82179 15.8492 2.21231L18.6777 5.04074C19.0682 5.43126 19.0682 6.06443 18.6777 6.45495L7.24264 17.89ZM3 19.89H21V21.89H3V19.89Z"></path></svg>
                 </div>
@@ -154,7 +154,7 @@ const triggerReview = () => {
                 <input type="number" v-model="watchUpdateModel.vessel.finalLength">
             </div>
         </div>
-        <div class="detail-element" v-if="(route.params.userId === auth.user.value._id) && !editMode">
+        <div class="detail-element" v-if="(route.params.userId === auth.user._id) && !editMode">
             <h3>Progress</h3>
             <WatchProgressItem :final="watchModel.vessel.currentLength" :progress="watchModel.progress" @progressChanged="(p) => onProgress(p)"/>
         </div>
@@ -169,7 +169,7 @@ const triggerReview = () => {
             <div class="detail-group">
                 <button class="button-amber-hollow" v-if="!reviewMode" @click="reviewMode = true">{{ watchModel.review ? "Edit your" : "Write a" }} review</button>
                 <button class="button-amber-solid" v-if="reviewMode" @click="triggerReview">Submit review</button>
-                <button class="button-red-hollow" v-if="route.params.userId === auth.user.value._id" @click="remove">remove from list</button>
+                <button class="button-red-hollow" v-if="route.params.userId === auth.user._id" @click="remove">remove from list</button>
                 <button class="button-cyan-hollow" v-if="!(userWatches.map(w => w.vessel._id).includes(watchModel.vessel._id))" @click="add">Add to list</button>
             </div>
         </div>

@@ -5,11 +5,11 @@ import VesselForm from '../components/VesselForm.vue';
 import { useWatch } from '../composables/useWatch';
 import { useRouter } from 'vue-router';
 import VesselDetail from '../components/VesselDetail.vue';
-import { useAuth } from '../composables/useAuth';
+import { useAuthStore } from '../store/useAuthStore';
 
 const router = useRouter()
 
-const auth = useAuth()
+const auth = useAuthStore()
 const { searchVessels, searchLoading, addVessel } = useVessel()
 const { addWatch } = useWatch()
 
@@ -38,7 +38,7 @@ const onCreate = async (model) => {
         vessel: vessel,
         progress: 0
     }
-    const watch = await addWatch(auth.user.value._id, watchModel)
+    const watch = await addWatch(auth.user._id, watchModel)
 
     router.push({ name: "detail", params: { userId: watch.owner._id, watchId: watch._id }})
 }   
@@ -48,7 +48,7 @@ const onWatch = async (vessel) => {
         vessel: vessel,
         progress: 0
     }
-    const watch = await addWatch(auth.user.value._id, watchModel)
+    const watch = await addWatch(auth.user._id, watchModel)
     router.push({ name: "detail", params: { userId: watch.owner._id, watchId: watch._id }})
 }  
 

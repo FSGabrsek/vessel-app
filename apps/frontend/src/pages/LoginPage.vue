@@ -1,19 +1,19 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuth } from '../composables/useAuth';
 import { useForm } from '../composables/useForm';
+import { useAuthStore } from '../store/useAuthStore';
 
 const router = useRouter();
-const auth = useAuth();
+const auth = useAuthStore();
 
 const form = ref(null)
-
 const loginModel = ref({
     email: "",
     password: ""
 })
-const errorMessage = ref('');
+const errorMessage = ref("");
+
 const { isValid } = useForm({
     form: form, 
     model: loginModel, 
@@ -23,10 +23,10 @@ const { isValid } = useForm({
 const login = async () => {
     try {
         await auth.login(loginModel.value.email, loginModel.value.password);
-        await router.push('/'); // Redirect to home after successful login
+        await router.push({ name: 'home' });
     } catch(e) {
         console.error(e)
-        errorMessage.value = 'Invalid email or password';
+        errorMessage.value = "Invalid email or password";
     }
 };
 </script>

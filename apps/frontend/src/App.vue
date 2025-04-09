@@ -2,12 +2,9 @@
 import { RouterView, useRouter } from 'vue-router';
 import Navbar from './components/Navbar.vue'
 import { useLoadingStore } from './store/useLoadingStore';
-import { useAuth } from './composables/useAuth';
 
 const router = useRouter();
 const loadingStore = useLoadingStore();
-
-const auth = useAuth()
 
 const retry = () => {
     router.go(0);

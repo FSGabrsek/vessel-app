@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { useAuth } from './useAuth'
 import { useLoadingStore } from '../store/useLoadingStore'
+import { useAuthStore } from '../store/useAuthStore'
 
 export function useUser() {
-    const auth = useAuth()
+    const auth = useAuthStore()
 
     const loadingStore = useLoadingStore()
 
@@ -14,7 +14,7 @@ export function useUser() {
             const res = await axios.get(
     
                 `${import.meta.env.VITE_API_URL}/user/${userId}`,
-                { headers: { "Authorization" : `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization" : `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
@@ -32,17 +32,17 @@ export function useUser() {
             await axios.put(
                 `${import.meta.env.VITE_API_URL}/user/${userId}`,
                 model,
-                { headers: { "Authorization" : `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization" : `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
         } catch(e) {
             console.error(e)
 
-            if (e.response.status === 409) {
+            if (e.response && e.response.status === 409) {
                 loadingStore.finish(true)
                 throw new Error("This email is already in use");
             }
-            if (e.response.status === 401) {
+            if (e.response && e.response.status === 401) {
                 loadingStore.finish(true)
                 throw new Error("Old password is incorrect");
             }
@@ -57,7 +57,7 @@ export function useUser() {
             await axios.put(
                 `${import.meta.env.VITE_API_URL}/user/${followerId}/follow/${followingId}`,
                 {},
-                { headers: { "Authorization" : `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization" : `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
         } catch(e) {
@@ -73,7 +73,7 @@ export function useUser() {
             await axios.put(
                 `${import.meta.env.VITE_API_URL}/user/${followerId}/unfollow/${followingId}`,
                 {},
-                { headers: { "Authorization" : `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization" : `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
         } catch(e) {

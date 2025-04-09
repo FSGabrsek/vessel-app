@@ -1,35 +1,36 @@
 <script setup>
 import { ref, watchEffect } from 'vue';
+import { useAuthStore } from '../store/useAuthStore';
+import { useForm } from '../composables/useForm';
 import { useRouter } from 'vue-router';
-import { useAuth } from '../composables/useAuth';
 
+const auth = useAuthStore();
 const router = useRouter();
-const auth = useAuth();
 
 const form = ref(null)
-const formIsvalid = ref(false)
-const userModel = ref({})
+const userModel = ref({
+    username: "",
+    email: "",
+    dateOfBirth: "",
+    password: ""
+})
+const errorMessage = ref("");
+
+const { isValid } = useForm({
+    form: form,
+    model: userModel,
+    requiredKeys: ["username", "email", "dateOfBirth", "password"],
+})
 
 const register = async () => {
-
-};
-
-watchEffect(() => {
-    let model = userModel.value
-
-    const required = ["username", "email", "dateOfBirth", "password"];
-    const hasAllFields = required.every(key => model.hasOwnProperty(key) && model[key] !== "");
-
-    let domValid = true;
-    if (form.value) {
-        const controls = form.value.querySelectorAll('input, select, textarea');
-        domValid = Array.from(controls).every(el => {
-            return el.offsetParent === null || el.checkValidity();
-        });
+    try {
+        await auth.register(userModel);
+        await router.push({ name: 'home' });
+    } catch(e) {
+        console.error(e)
+        errorMessage.value = "This email is already in use";
     }
-
-    formIsvalid.value = hasAllFields && domValid;
-})
+};
 </script>
 
 <template>
@@ -59,7 +60,7 @@ watchEffect(() => {
             </div>
             <span class="error-span" v-if="errorMessage" >{{ errorMessage }}</span>
 
-            <button @click="register" class="button-cyan-solid" :disabled="!formIsvalid">Register</button>
+            <button @click="register" class="button-cyan-solid" :disabled="!isValid">Register</button>
         </div>
   </div>
 </template>

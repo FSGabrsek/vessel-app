@@ -1,10 +1,10 @@
 import axios from 'axios'
-import { useAuth } from './useAuth'
 import { useLoadingStore } from '../store/useLoadingStore'
 import { ref } from 'vue'
+import { useAuthStore } from '../store/useAuthStore'
 
 export function useVessel() {
-    const auth = useAuth()
+    const auth = useAuthStore()
 
     const loadingStore = useLoadingStore()
     const searchLoading = ref(false)
@@ -14,7 +14,7 @@ export function useVessel() {
         
         try {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/vessel/${vesselId}/watch`,
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data.map(w => w.owner)
@@ -31,7 +31,7 @@ export function useVessel() {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/vessel/`,
                 { 
                     params: { s: query }, 
-                    headers: { "Authorization": `Bearer ${auth.user.value.token}` }, 
+                    headers: { "Authorization": `Bearer ${auth.user.token}` }, 
                 }
             )
             searchLoading.value = false
@@ -49,7 +49,7 @@ export function useVessel() {
             const res = await axios.get(`${import.meta.env.VITE_API_URL}/vessel/recommendation/user/${userId}`,
                 { 
                     params: { n: amount }, 
-                    headers: { "Authorization": `Bearer ${auth.user.value.token}` }, 
+                    headers: { "Authorization": `Bearer ${auth.user.token}` }, 
                 }
             )         
             loadingStore.finish(true)
@@ -75,7 +75,7 @@ export function useVessel() {
                     "releaseInterval": model.releaseInterval,
                     "bulkRelease": model.bulkRelease
                 },
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
@@ -94,7 +94,7 @@ export function useVessel() {
                     "status": model.status,
                     "finalLength": model.finalLength
                 },
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
@@ -109,7 +109,7 @@ export function useVessel() {
 
         try {
             const res = await axios.delete(`${import.meta.env.VITE_API_URL}/vessel/${vesselId}`,
-                { headers: { "Authorization": `Bearer ${auth.user.value.token}` } }
+                { headers: { "Authorization": `Bearer ${auth.user.token}` } }
             )
             loadingStore.finish(true)
             return res.data
