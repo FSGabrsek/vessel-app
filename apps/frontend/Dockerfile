@@ -2,9 +2,7 @@ FROM nginx:stable-alpine
 
 RUN rm -rf /usr/share/nginx/html/*
 
-WORKDIR /usr/src/app
-
-COPY dist/apps/frontend/ .
+COPY dist/apps/frontend/ /usr/share/nginx/html
 
 EXPOSE 80
 
