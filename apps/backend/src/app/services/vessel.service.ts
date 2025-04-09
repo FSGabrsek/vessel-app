@@ -69,10 +69,19 @@ export class VesselService {
                 }
             },
             { $unwind: "$combined" },
+            {
+                $lookup: {
+                  from: "users",
+                  localField: "owner",
+                  foreignField: "_id",
+                  as: "owner"
+                }
+            },
             { $replaceRoot: { newRoot: "$combined" } }
         ]);
 
         const vesselDocuments = rawVessels.map(v => this.vesselModel.hydrate(v))
+        this.vesselModel.populate(vesselDocuments, { path: "owner" })
         return vesselDocuments.map(v => v.toObject())
     }
 
