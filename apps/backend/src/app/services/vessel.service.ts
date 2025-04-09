@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Vessel as VesselModel, VesselDocument, IVessel, IVesselCreateDTO, IVesselUpdateTO, Watch as WatchModel, WatchDocument } from "@vessel/shared";
 import mongoose, { Model, Mongoose } from "mongoose";
+import { Neo4jService } from "nest-neo4j/dist";
 
 @Injectable()
 export class VesselService {
@@ -10,6 +11,7 @@ export class VesselService {
     constructor(
         @InjectModel(VesselModel.name) private vesselModel: Model<VesselDocument>,
         @InjectModel(WatchModel.name) private watchModel: Model<WatchDocument>,
+        private readonly neo4jService: Neo4jService
     ) {}
 
     createFuzzyRegex(filter: string): RegExp {
@@ -29,6 +31,46 @@ export class VesselService {
         this.logger.log(`Finding vessel with id ${_id}`);
 
         return this.vesselModel.findOne({ _id }).populate('owner').exec();
+    }
+
+    async reccommend(_userId: string, count: number): Promise<IVessel[]> {
+        const recommendQuery = `
+            MATCH (u:User {id: $userId})-[:FOLLOWS]->(f:User)-[:LIKES]->(v:Vessel)
+            WHERE NOT (u)-[:DISLIKED]->(v)
+            WITH v, COUNT(f) AS likesFromFollowed
+            RETURN v.id as id
+            ORDER BY likesFromFollowed DESC
+        `;
+
+        const recommendations = await this.neo4jService.read(recommendQuery, { userId: _userId });
+        const recommendedIds = recommendations.records.map(record => record.get('id'));
+
+        return this.vesselModel.aggregate([
+            {
+                $facet: {
+                    recommended: [
+                        { $match: { _id: { $in: recommendedIds.map(id => new mongoose.Types.ObjectId(id)) } } },
+                        { $sample: { size: count } }
+                    ],
+                    fallback: [
+                        { $match: { _id: { $nin: recommendedIds.map(id => new mongoose.Types.ObjectId(id)) } } },
+                        { $sample: { size: count } }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    combined: {
+                        $concatArrays: [
+                            "$recommended",
+                            { $slice: ["$fallback", { $subtract: [count, { $size: "$recommended" }] }] }
+                        ]
+                    }
+                }
+            },
+            { $unwind: "$combined" },
+            { $replaceRoot: { newRoot: "$combined" } }
+        ]);
     }
 
     async create(vessel: IVesselCreateDTO, owner_id: string): Promise<IVessel> {
