@@ -6,9 +6,15 @@ WORKDIR /usr/src/app
 
 ENV PATH /usr/src/node_modules/.bin:$PATH
 
-COPY ./apps/ ./apps/
+RUN echo "ENV PATH /usr/src/node_modules/.bin:$PATH"
+
+COPY ./apps .
+
+RUN echo "COPY ./apps ."
 
 COPY package*.json .
+
+COPY nx.json .
 
 RUN npm install
 
