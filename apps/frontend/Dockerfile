@@ -31,7 +31,7 @@ FROM nginx:latest AS prod
 
 RUN rm -rf /usr/share/nginx/html/*
 
-COPY --from=prod-build /usr/src/dist/apps/frontend/ /usr/share/nginx/html
+COPY --from=prod-build /usr/src/app/dist/apps/frontend/ /usr/share/nginx/html
 
 COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 

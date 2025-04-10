@@ -4,7 +4,7 @@ services:
     build:
       dockerfile: ./apps/frontend/Dockerfile
       args:
-      - BACKEND_URL="/api"
+      - BACKEND_URL=/api
     ports:
     - "80:80"
     stdin_open: true
