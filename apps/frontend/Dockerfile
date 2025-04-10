@@ -16,7 +16,7 @@ COPY package*.json .
 
 COPY nx.json .
 
-COPY tsconfif.base.json .
+COPY tsconfig.base.json .
 
 RUN npm install
 
