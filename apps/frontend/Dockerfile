@@ -6,11 +6,7 @@ WORKDIR /usr/src/app
 
 ENV PATH /usr/src/node_modules/.bin:$PATH
 
-RUN echo "ENV PATH /usr/src/node_modules/.bin:$PATH"
-
 COPY ./apps .
-
-RUN echo "COPY ./apps ."
 
 COPY package*.json .
 
@@ -18,9 +14,11 @@ COPY nx.json .
 
 COPY tsconfig.base.json .
 
-RUN npm install
+RUN npm ci
 
 FROM build AS prod-build 
+
+WORKDIR /usr/src/app
 
 ARG BACKEND_URL=/api
 
