@@ -16,6 +16,8 @@ COPY package*.json .
 
 COPY nx.json .
 
+COPY tsconfif.base.json .
+
 RUN npm install
 
 FROM build AS prod-build 
