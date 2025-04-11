@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Put, Request, UseGuards } from "@nestjs/common";
-import { ILinkedUser, IUserUpdateDTO, IUserDTO } from "@vessel/shared"
+import { IUserDTO, LinkedUserDTO, UserUpdateDTO, UserDTO } from "@vessel/shared"
 import { UserService } from "../services/user.service";
 import { AuthGuard } from "../guards/auth.guards";
 
@@ -14,7 +14,7 @@ export class UserController {
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string): Promise<ILinkedUser | null> {
+    async findOne(@Param('id') id: string): Promise<LinkedUserDTO | null> {
         return this.userService.findOneLinkedById(id);
     }
 
@@ -22,8 +22,8 @@ export class UserController {
     update(
         @Request() req: any,
         @Param('id') id: string,
-        @Body() user: IUserUpdateDTO
-    ): Promise<IUserDTO | null> {
+        @Body() user: UserUpdateDTO
+    ): Promise<UserDTO | null> {
         if (req.user.user_id !== id) {
             throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
         }

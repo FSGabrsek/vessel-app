@@ -1,13 +1,12 @@
 import {
     Controller,
-    Request,
     Post,
     UseGuards,
     Logger,
     Body
 } from '@nestjs/common';
 
-import { IUserCreateDTO, IUserIdentity, IUserLoginDTO } from '@vessel/shared';
+import { UserCreateDTO, UserIdentityDTO, UserLoginDTO } from '@vessel/shared';
 import { Public } from '../deocrators/decorators';
 import { AuthService } from '../services/auth.service';
 import { UserExistGuard } from '../guards/user-exists.guard';
@@ -20,7 +19,7 @@ export class AuthController {
 
     @Public()
     @Post('login')
-    async login(@Body() credentials: IUserLoginDTO): Promise<IUserIdentity> {
+    async login(@Body() credentials: UserLoginDTO): Promise<UserIdentityDTO> {
         this.logger.log('Login');
         return await this.authService.login(credentials);
     }
@@ -28,7 +27,7 @@ export class AuthController {
     @Public()
     @UseGuards(UserExistGuard)
     @Post('register')
-    async register(@Body() user: IUserCreateDTO): Promise<IUserIdentity> {
+    async register(@Body() user: UserCreateDTO): Promise<UserIdentityDTO> {
         this.logger.log('Register');
         return await this.authService.register(user);
     }

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Vessel as VesselModel, VesselDocument, IVessel, IVesselCreateDTO, IVesselUpdateTO, Watch as WatchModel, WatchDocument } from "@vessel/shared";
+import { Vessel as VesselModel, VesselDocument, IVessel, IVesselCreateDTO, IVesselUpdateDTO, Watch as WatchModel, WatchDocument } from "@vessel/shared";
 import mongoose, { Model, Mongoose } from "mongoose";
 import { Neo4jService } from "nest-neo4j/dist";
 
@@ -98,7 +98,7 @@ export class VesselService {
         return this.vesselModel.create(createItem);
     }
 
-    async update(_id: string, vessel: IVesselUpdateTO, user_id: string): Promise<IVessel> {
+    async update(_id: string, vessel: IVesselUpdateDTO, user_id: string): Promise<IVessel> {
         this.logger.log(`Updating vessel with id ${_id}`)
 
         const item = await this.vesselModel.findOne({ _id }).populate('owner').exec();
