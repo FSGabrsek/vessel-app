@@ -134,19 +134,35 @@ export class VesselService {
 
         const mongoSession = await this.vesselModel.startSession();
 
+        const neo4jSession = this.neo4jService.getWriteSession();
+
         mongoSession.startTransaction();
+        const neo4jTransaction = neo4jSession.beginTransaction();
 
         try {
             await this.watchModel.deleteMany({ vessel: new mongoose.Types.ObjectId(_id), owner: new mongoose.Types.ObjectId(user_id) }, { session: mongoSession }).exec()
             const deletedItem = await this.vesselModel.findOneAndDelete({ _id }, { session: mongoSession }).exec();
+
+            const query = `
+                MATCH (v:Vessel {id: $vesselId})
+                DETACH DELETE v
+            `;
+
+            await neo4jTransaction.run(query, {
+                vesselId: _id.toString()
+            });
+
             await mongoSession.commitTransaction();
+            await neo4jTransaction.commit();
 
             return deletedItem;
         } catch (error) {
             await mongoSession.abortTransaction();
+            await neo4jTransaction.rollback();
             throw error;
         } finally {
             mongoSession.endSession();
+            neo4jSession.close();
         }
     }
 }
