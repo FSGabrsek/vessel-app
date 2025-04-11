@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Request, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "../guards/auth.guards";
 import { WatchService } from "../services/watch.service";
-import { IReview, IWatch, IWatchCreateDTO, IWatchUpdateDTO } from "@vessel/shared";
+import { IReview, IWatch, WatchCreateDTO, WatchDTO, WatchUpdateDTO } from "@vessel/shared";
 
 @Controller('user')
 @UseGuards(AuthGuard)
@@ -11,22 +11,22 @@ export class WatchController {
     @Get(':userId/watch')
     async findAll(
         @Param('userId') userId: string,
-    ): Promise<IWatch[]> {
+    ): Promise<WatchDTO[]> {
         return this.watchService.findByOwner(userId);
     }
 
     @Get(':userId/watch/:id')
     async findOne(
         @Param('id') id: string
-    ): Promise<IWatch | null> {
+    ): Promise<WatchDTO | null> {
         return this.watchService.findOneById(id);
     }
 
     @Post(':userId/watch')
     async create(
         @Request() req: any,
-        @Body() watch: IWatchCreateDTO
-    ): Promise<IWatch> {
+        @Body() watch: WatchCreateDTO
+    ): Promise<WatchDTO> {
         return this.watchService.create(watch, req.user.user_id);
     }
 
@@ -34,8 +34,8 @@ export class WatchController {
     async update(
         @Request() req: any,
         @Param('id') id: string,
-        @Body() watch: IWatchUpdateDTO
-    ): Promise<IWatch> {
+        @Body() watch: WatchUpdateDTO
+    ): Promise<WatchDTO> {
         return this.watchService.update(id, watch, req.user.user_id);
     }
 
@@ -43,7 +43,7 @@ export class WatchController {
     async remove(
         @Request() req: any,
         @Param('id') id: string,
-    ): Promise<IWatch> {
+    ): Promise<WatchDTO> {
         return this.watchService.delete(id, req.user.user_id);
     }
 
@@ -52,7 +52,7 @@ export class WatchController {
         @Request() req: any,
         @Param('id') id: string,
         @Body() review: IReview
-    ): Promise<IWatch> {
+    ): Promise<WatchDTO> {
         return this.watchService.createReview(id, review, req.user.user_id);
     }
 
@@ -69,7 +69,7 @@ export class WatchController {
     async removeReview(
         @Request() req: any,
         @Param('id') id: string,
-    ): Promise<IWatch> {
+    ): Promise<WatchDTO> {
         return this.watchService.deleteReview(id, req.user.user_id);
     }
 }

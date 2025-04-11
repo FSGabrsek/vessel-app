@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "../guards/auth.guards";
 import { VesselService } from "../services/vessel.service";
-import { IVessel, IVesselCreateDTO, IVesselUpdateTO, IWatch } from "@vessel/shared";
+import { IVessel, IWatch, VesselCreateDTO, VesselDTO, VesselUpdateDTO } from "@vessel/shared";
 import { WatchService } from "../services/watch.service";
 
 @Controller('vessel')
@@ -13,12 +13,12 @@ export class VesselController {
     ) {}
 
     @Get()
-    async findAll(@Query('s') search: string): Promise<IVessel[]> {
+    async findAll(@Query('s') search: string): Promise<VesselDTO[]> {
         return this.vesselService.findAll(search);
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string): Promise<IVessel | null> {
+    async findOne(@Param('id') id: string): Promise<VesselDTO | null> {
         return this.vesselService.findOneById(id);
     }
 
@@ -30,7 +30,7 @@ export class VesselController {
     @Post()
     async create(
         @Request() req: any,
-        @Body() vessel: IVesselCreateDTO
+        @Body() vessel: VesselCreateDTO
     ): Promise<IVessel> {
         return this.vesselService.create(vessel, req.user.user_id);
     }
@@ -39,8 +39,8 @@ export class VesselController {
     async update(
         @Request() req: any,
         @Param('id') id: string,
-        @Body() vessel: IVesselUpdateTO
-    ): Promise<IVessel> {
+        @Body() vessel: VesselUpdateDTO
+    ): Promise<VesselDTO> {
         return this.vesselService.update(id, vessel, req.user.user_id);
     }
 
@@ -48,7 +48,7 @@ export class VesselController {
     async remove(
         @Request() req: any,
         @Param('id') id: string,
-    ): Promise<IVessel> {
+    ): Promise<VesselDTO> {
         return this.vesselService.delete(id, req.user.user_id);
     }
 
@@ -56,7 +56,7 @@ export class VesselController {
     async findRecommended(
         @Query('n') n: number = 5,
         @Param('userId') userId: string 
-    ): Promise<IVessel[]> {
+    ): Promise<VesselDTO[]> {
         return this.vesselService.reccommend(userId, +n)
     }
 }
