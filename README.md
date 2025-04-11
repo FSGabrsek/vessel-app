@@ -1,5 +1,7 @@
 # Vessel
-Vessel is a modern web application designed for tracking your favorite TV series, films, and manga—whether you're managing your personal watchlist or exploring titles as part of a community. With a clean interface and intuitive features, Vessel helps you stay organized, discover new content, and share recommendations with others.
+Vessel is a modern web application designed for tracking your favorite TV series, films, and manga—
+
+whether you're managing your personal watchlist or exploring titles as part of a community. With a clean interface and intuitive features, Vessel helps you stay organized, discover new content, and share recommendations with others.
 
 ## Features
 
