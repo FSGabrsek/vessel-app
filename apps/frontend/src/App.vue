@@ -2,6 +2,7 @@
 import { RouterView, useRouter } from 'vue-router';
 import Navbar from './components/Navbar.vue'
 import { useLoadingStore } from './store/useLoadingStore';
+import Footer from './components/Footer.vue';
 
 const router = useRouter();
 const loadingStore = useLoadingStore();
@@ -13,11 +14,12 @@ const retry = () => {
 </script>
 
 <template>
-    <div class="root">
+    <div class="root-wrapper">
         <Navbar />
         <main v-if="!loadingStore.error">
             <RouterView />
         </main>
+
         <div v-if="loadingStore.pending > 0" class="loading">
             <div class="load-wrapper">
                 <span class="loader"></span>
@@ -29,17 +31,21 @@ const retry = () => {
             <button class="button-amber-hollow" @click=retry>Retry</button>
         </div>
     </div>
+    <div id="page-end">
+        <Footer  />
+    </div>
 </template>
 
 <style scoped lang="scss">
 @import "styles.scss";
 
-.root {
+.root-wrapper {
     display: flex;
     flex-direction: column;
 
-    height: 100%;
-    width: 100%;
+    flex: 1;
+
+    padding-bottom: $px-l;
 }
 
 .error, .loading {
@@ -92,7 +98,7 @@ main {
     flex: 1;
 }
 
-app-footer {
+#page-end {
     align-self: end;
 }
 
