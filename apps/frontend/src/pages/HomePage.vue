@@ -2,16 +2,30 @@
 import { onBeforeMount, ref } from 'vue';
 import VesselDetail from '../components/VesselDetail.vue';
 import { useVessel } from '../composables/useVessel';
+import { useWatch } from '../composables/useWatch';
 import { useAuthStore } from '../store/useAuthStore';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const auth = useAuthStore()
 const { loadRecommendations } = useVessel()
+const { addWatch } = useWatch()
 
 const recommendations = ref(null)
 
 onBeforeMount(async () => {
     recommendations.value = await loadRecommendations(auth.user._id, 5)
 })
+
+const onWatch = async (vessel) => {
+    const watchModel = {
+        vessel: vessel,
+        progress: 0
+    }
+    const watch = await addWatch(auth.user._id, watchModel)
+    router.push({ name: "detail", params: { userId: watch.owner._id, watchId: watch._id }})
+}  
 
 </script>
 
@@ -29,7 +43,7 @@ onBeforeMount(async () => {
                 </p>
             </div>
             <div class="content-card" v-for="vessel in recommendations" >
-                <VesselDetail :target="vessel" :displayItem="true" />
+                <VesselDetail :target="vessel" :displayItem="true" @submit="(v) => onWatch(v)"/>
             </div>
         </div>
     </div>
@@ -37,10 +51,6 @@ onBeforeMount(async () => {
 
 <style lang="scss" scoped>
 @import '../styles';
-
-#onboard {
-    font-size: x-large;
-}
 
 .content-wrapper {
     display: grid;
@@ -58,5 +68,6 @@ onBeforeMount(async () => {
 
 .onboard {
     top: 0;
+    font-size: x-large;
 }
 </style>
