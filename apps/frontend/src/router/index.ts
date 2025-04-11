@@ -7,6 +7,7 @@ import LoginPage from '../pages/LoginPage.vue';
 import RegisterPage from '../pages/RegisterPage.vue';
 import WatchDetailPage from '../pages/WatchDetailPage.vue';
 import WatchListPage from '../pages/WatchListPage.vue';
+import AboutPage from '../pages/AboutPage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,7 @@ const router = createRouter({
     { name: "login", path: "/login", component: LoginPage, meta: { public_route: true } },
     { name: "register", path: "/register", component: RegisterPage, meta: { public_route: true } },
 
+    { name: "about", path: "/about", component: AboutPage, meta: { public_route: true } }
   ],
 });
 
